@@ -26,11 +26,11 @@ export function Header() {
               title="Theme settings"
             >
               {theme === 'dark' ? (
-                <Moon className="h-5 w-5" />
+                <Moon className="h-4 w-4" />
               ) : theme === 'system' ? (
-                <LaptopIcon className="h-5 w-5" />
+                <LaptopIcon className="h-4 w-4" />
               ) : (
-                <Sun className="h-5 w-5" />
+                <Sun className="h-4 w-4" />
               )}
             </Button>
           </DropdownMenuTrigger>
@@ -58,7 +58,7 @@ export function Header() {
           className="h-10 w-10 rounded-full"
         >
           <Link to="/settings">
-            <Settings className="h-5 w-5" />
+            <Settings className="h-4 w-4" />
           </Link>
         </Button>
       </div>

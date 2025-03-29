@@ -109,29 +109,29 @@ const Settings = () => {
           <CardTitle>Theme</CardTitle>
         </CardHeader>
         <CardContent className="p-6">
-          <div className="flex gap-4">
+          <div className="flex gap-3">
             <Button
               variant={theme === 'light' ? "default" : "outline"}
               onClick={() => setTheme("light")}
-              className="flex-1 h-12"
+              className="flex-1 h-11"
             >
-              <Sun className="mr-2 h-5 w-5" />
+              <Sun className="mr-2 h-4 w-4" />
               Light
             </Button>
             <Button
               variant={theme === 'dark' ? "default" : "outline"}
               onClick={() => setTheme("dark")}
-              className="flex-1 h-12"
+              className="flex-1 h-11"
             >
-              <Moon className="mr-2 h-5 w-5" />
+              <Moon className="mr-2 h-4 w-4" />
               Dark
             </Button>
             <Button
               variant={theme === 'system' ? "default" : "outline"}
               onClick={() => setTheme("system")}
-              className="flex-1 h-12"
+              className="flex-1 h-11"
             >
-              <LaptopIcon className="mr-2 h-5 w-5" />
+              <LaptopIcon className="mr-2 h-4 w-4" />
               System
             </Button>
           </div>
@@ -157,18 +157,18 @@ const Settings = () => {
             </div>
           )}
           
-          <div className="flex gap-2">
+          <div className="flex flex-col sm:flex-row gap-3">
             <Input
               placeholder="Enter new API key"
               value={apiKey}
               onChange={(e) => setApiKey(e.target.value)}
               type="password"
-              className="flex-1 h-12"
+              className="h-11 flex-grow"
             />
             <Button 
               onClick={handleUpdateApiKey} 
               disabled={isLoading || !apiKey.trim()}
-              className="h-12 px-6"
+              className="h-11 whitespace-nowrap"
             >
               Update Key
             </Button>
@@ -179,7 +179,7 @@ const Settings = () => {
               variant="destructive" 
               onClick={handleRemoveApiKey} 
               disabled={isLoading}
-              className="w-full h-12"
+              className="w-full h-11"
             >
               Remove API Key
             </Button>

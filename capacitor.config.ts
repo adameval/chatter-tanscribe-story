@@ -12,6 +12,12 @@ const config: CapacitorConfig = {
     CapacitorHttp: {
       enabled: true
     }
+  },
+  android: {
+    useLegacyBridge: false
+  },
+  ios: {
+    contentInset: 'automatic'
   }
 };
 

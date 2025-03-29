@@ -166,17 +166,16 @@ export function LiveTranscription({ isActive, onStatusChange }: LiveTranscriptio
         <Button
           onClick={() => onStatusChange(!isActive)}
           variant={isActive ? "destructive" : "default"}
-          className={`w-full h-12 ${isActive ? "animate-pulse" : ""}`}
-          size="lg"
+          className="w-full h-11"
         >
           {isActive ? (
             <>
-              <StopCircle className="mr-2 h-5 w-5" />
+              <StopCircle className="mr-2 h-4 w-4" />
               Stop Live Transcription (RU/ES)
             </>
           ) : (
             <>
-              <Mic className="mr-2 h-5 w-5" />
+              <Mic className="mr-2 h-4 w-4" />
               Start Live Transcription (RU/ES)
             </>
           )}
@@ -205,10 +204,9 @@ export function LiveTranscription({ isActive, onStatusChange }: LiveTranscriptio
             <Button
               onClick={handleSaveTranscript}
               variant="outline"
-              className="w-full h-12"
-              size="lg"
+              className="w-full h-11"
             >
-              <Save className="mr-2 h-5 w-5" />
+              <Save className="mr-2 h-4 w-4" />
               Save Live Transcript
             </Button>
           </>

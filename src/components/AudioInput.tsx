@@ -24,21 +24,27 @@ export function AudioInput({ onFileSelected, isLoading, progress, status }: Audi
     try {
       const result = await FilePicker.pickFiles({
         types: ["audio/mpeg", "audio/wav", "video/mp4", "audio/x-m4a"],
-        // Remove the unsupported 'multiple' property
       });
 
-      if (result.files.length > 0) {
-        const file = result.files[0];
-        console.log("Selected file:", file);
-        onFileSelected(file.path || '');
+      // If no files were selected (user canceled), simply return without error
+      if (!result.files || result.files.length === 0) {
+        console.log("File selection canceled by user");
+        return;
       }
+
+      const file = result.files[0];
+      console.log("Selected file:", file);
+      onFileSelected(file.path || '');
     } catch (error) {
-      console.error("Error selecting file:", error);
-      toast({
-        title: "Error",
-        description: `Failed to process file: ${error}`,
-        variant: "destructive",
-      });
+      // Only show error if it's not a cancellation
+      if (error instanceof Error && !error.message.includes("canceled")) {
+        console.error("Error selecting file:", error);
+        toast({
+          title: "Error",
+          description: `Failed to process file: ${error}`,
+          variant: "destructive",
+        });
+      }
     }
   };
 
@@ -82,51 +88,48 @@ export function AudioInput({ onFileSelected, isLoading, progress, status }: Audi
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-col sm:flex-row gap-4">
+      <div className="flex flex-col sm:flex-row gap-3">
         <Button 
           onClick={handleFileSelect} 
           disabled={isLoading || isRecording}
-          className="h-12 px-6 flex-1"
-          size="lg"
+          className="h-11 flex-1"
           variant="default"
         >
-          <Folder className="mr-2 h-5 w-5" />
+          <Folder className="mr-2 h-4 w-4" />
           Select File
         </Button>
         <Button 
           onClick={toggleRecording} 
           disabled={isLoading}
           variant={isRecording ? "destructive" : "default"}
-          className="h-12 px-6 flex-1"
-          size="lg"
+          className="h-11 flex-1"
         >
           {isRecording ? (
             <>
-              <StopCircle className="mr-2 h-5 w-5" />
+              <StopCircle className="mr-2 h-4 w-4" />
               Stop Recording
             </>
           ) : (
             <>
-              <Mic className="mr-2 h-5 w-5" />
+              <Mic className="mr-2 h-4 w-4" />
               Record Audio
             </>
           )}
         </Button>
       </div>
 
-      <div className="flex gap-2">
+      <div className="flex gap-3">
         <Input 
           placeholder="Enter Media URL" 
           value={mediaURL}
           onChange={(e) => setMediaURL(e.target.value)}
           disabled={isLoading || isRecording}
-          className="flex-1 h-12"
+          className="h-11"
         />
         <Button 
           onClick={handleURLSubmit} 
           disabled={isLoading || isRecording || !mediaURL}
-          className="h-12 px-6"
-          size="lg"
+          className="h-11 whitespace-nowrap"
         >
           <LinkIcon className="mr-2 h-4 w-4" />
           Load URL
