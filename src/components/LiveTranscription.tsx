@@ -166,7 +166,7 @@ export function LiveTranscription({ isActive, onStatusChange }: LiveTranscriptio
         <Button
           onClick={() => onStatusChange(!isActive)}
           variant={isActive ? "destructive" : "default"}
-          className="w-full h-11"
+          className="w-full h-12 bg-[#0f172a] dark:bg-[#0f172a] text-white hover:bg-[#1e293b] after:absolute after:inset-0 after:z-[-1] after:bg-gradient-to-r after:from-transparent after:via-white/20 after:to-transparent after:translate-x-[-200%] hover:after:transition-transform hover:after:duration-500 hover:after:translate-x-[200%]"
         >
           {isActive ? (
             <>
@@ -204,7 +204,7 @@ export function LiveTranscription({ isActive, onStatusChange }: LiveTranscriptio
             <Button
               onClick={handleSaveTranscript}
               variant="outline"
-              className="w-full h-11"
+              className="w-full h-12"
             >
               <Save className="mr-2 h-4 w-4" />
               Save Live Transcript
@@ -213,7 +213,7 @@ export function LiveTranscription({ isActive, onStatusChange }: LiveTranscriptio
         )}
         
         {isActive && entries.length === 0 && (
-          <div className="text-center p-6 text-muted-foreground">
+          <div className="text-center p-6 text-sm text-muted-foreground">
             Listening for Russian and Spanish speech...
           </div>
         )}

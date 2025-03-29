@@ -14,9 +14,9 @@ export function Header() {
   const { theme, setTheme } = useTheme();
   
   return (
-    <header className="flex justify-between items-center mb-6 py-4">
-      <h1 className="text-3xl font-semibold tracking-tight">AI Transcriber</h1>
-      <div className="flex gap-3">
+    <header className="flex justify-between items-center mb-4 py-3">
+      <h1 className="text-2xl font-semibold tracking-tight">AI Transcriber</h1>
+      <div className="flex gap-2">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button

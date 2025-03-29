@@ -26,22 +26,35 @@ export function AudioInput({ onFileSelected, isLoading, progress, status }: Audi
         types: ["audio/mpeg", "audio/wav", "video/mp4", "audio/x-m4a"],
       });
 
-      // If no files were selected (user canceled), simply return without error
+      // If no files were selected (user canceled), return without showing error
       if (!result.files || result.files.length === 0) {
         console.log("File selection canceled by user");
         return;
       }
 
       const file = result.files[0];
-      console.log("Selected file:", file);
-      onFileSelected(file.path || '');
-    } catch (error) {
-      // Only show error if it's not a cancellation
-      if (error instanceof Error && !error.message.includes("canceled")) {
-        console.error("Error selecting file:", error);
+      
+      // Check that we have a valid path
+      if (!file.path) {
         toast({
           title: "Error",
-          description: `Failed to process file: ${error}`,
+          description: "The selected file doesn't have a valid path",
+          variant: "destructive",
+        });
+        return;
+      }
+      
+      console.log("Selected file:", file);
+      onFileSelected(file.path);
+    } catch (error) {
+      console.error("Error selecting file:", error);
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      
+      // Only show error toast if it's not a cancellation
+      if (!errorMessage.includes("canceled") && !errorMessage.includes("cancelled")) {
+        toast({
+          title: "Error",
+          description: `Failed to process file: ${errorMessage}`,
           variant: "destructive",
         });
       }
@@ -92,7 +105,7 @@ export function AudioInput({ onFileSelected, isLoading, progress, status }: Audi
         <Button 
           onClick={handleFileSelect} 
           disabled={isLoading || isRecording}
-          className="h-11 flex-1"
+          className="h-12 flex-1 bg-[#0f172a] dark:bg-[#0f172a] text-white hover:bg-[#1e293b] after:absolute after:inset-0 after:z-[-1] after:bg-gradient-to-r after:from-transparent after:via-white/20 after:to-transparent after:translate-x-[-200%] hover:after:transition-transform hover:after:duration-500 hover:after:translate-x-[200%]"
           variant="default"
         >
           <Folder className="mr-2 h-4 w-4" />
@@ -102,7 +115,7 @@ export function AudioInput({ onFileSelected, isLoading, progress, status }: Audi
           onClick={toggleRecording} 
           disabled={isLoading}
           variant={isRecording ? "destructive" : "default"}
-          className="h-11 flex-1"
+          className="h-12 flex-1 bg-[#0f172a] dark:bg-[#0f172a] text-white hover:bg-[#1e293b] after:absolute after:inset-0 after:z-[-1] after:bg-gradient-to-r after:from-transparent after:via-white/20 after:to-transparent after:translate-x-[-200%] hover:after:transition-transform hover:after:duration-500 hover:after:translate-x-[200%]"
         >
           {isRecording ? (
             <>
@@ -124,12 +137,12 @@ export function AudioInput({ onFileSelected, isLoading, progress, status }: Audi
           value={mediaURL}
           onChange={(e) => setMediaURL(e.target.value)}
           disabled={isLoading || isRecording}
-          className="h-11"
+          className="h-12"
         />
         <Button 
           onClick={handleURLSubmit} 
           disabled={isLoading || isRecording || !mediaURL}
-          className="h-11 whitespace-nowrap"
+          className="h-12 bg-[#0f172a] dark:bg-[#0f172a] text-white hover:bg-[#1e293b] after:absolute after:inset-0 after:z-[-1] after:bg-gradient-to-r after:from-transparent after:via-white/20 after:to-transparent after:translate-x-[-200%] hover:after:transition-transform hover:after:duration-500 hover:after:translate-x-[200%]"
         >
           <LinkIcon className="mr-2 h-4 w-4" />
           Load URL

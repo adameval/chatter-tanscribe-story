@@ -57,7 +57,7 @@ export function Translation({ transcription, isLoading }: TranslationProps) {
         placeholder="Enter text to translate, or leave empty to use transcription above"
         value={sourceText}
         onChange={(e) => setSourceText(e.target.value)}
-        className="min-h-[100px] focus:ring-2 focus:ring-primary/20"
+        className="min-h-[100px] text-sm focus:ring-2 focus:ring-primary/20"
         disabled={isLoading || isTranslating}
       />
       
@@ -90,11 +90,9 @@ export function Translation({ transcription, isLoading }: TranslationProps) {
         <Button
           onClick={handleTranslate}
           disabled={isLoading || isTranslating || (!sourceText && !transcription)}
-          className="h-12 px-6 ms-auto"
-          variant="default"
-          size="lg"
+          className="h-12 px-6 w-full sm:w-auto sm:ms-auto bg-[#0f172a] dark:bg-[#0f172a] text-white hover:bg-[#1e293b] after:absolute after:inset-0 after:z-[-1] after:bg-gradient-to-r after:from-transparent after:via-white/20 after:to-transparent after:translate-x-[-200%] hover:after:transition-transform hover:after:duration-500 hover:after:translate-x-[200%]"
         >
-          <Languages className="mr-2 h-5 w-5" />
+          <Languages className="mr-2 h-4 w-4" />
           {isTranslating ? "Translating..." : "Translate"}
         </Button>
       </div>
@@ -102,7 +100,7 @@ export function Translation({ transcription, isLoading }: TranslationProps) {
       <Textarea
         value={translation}
         readOnly
-        className="min-h-[100px] font-medium"
+        className="min-h-[100px] text-sm font-medium"
         placeholder="Translation will appear here..."
       />
     </div>

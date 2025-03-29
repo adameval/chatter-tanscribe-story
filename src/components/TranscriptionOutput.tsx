@@ -99,7 +99,7 @@ export function TranscriptionOutput({ transcription, detectedLanguage, isLoading
       <Textarea 
         value={transcription} 
         readOnly 
-        className="min-h-[200px] font-mono focus:ring-2 focus:ring-primary/20"
+        className="min-h-[200px] font-mono text-sm focus:ring-2 focus:ring-primary/20"
         placeholder="Transcription will appear here..."
       />
       
@@ -108,20 +108,18 @@ export function TranscriptionOutput({ transcription, detectedLanguage, isLoading
           onClick={handleSummarize}
           disabled={isLoading || !transcription || isSummarizing}
           variant="outline"
-          size="lg"
-          className="flex-1 h-12"
+          className="flex-1 h-12 border border-[#0f172a]/20 hover:bg-[#0f172a]/5 dark:border-white/20 dark:hover:bg-white/5"
         >
-          <FileText className="mr-2 h-5 w-5" />
+          <FileText className="mr-2 h-4 w-4" />
           {isSummarizing ? "Summarizing..." : "Summarize"}
         </Button>
         <Button
           onClick={handleSaveTranscription}
           disabled={isLoading || !transcription}
           variant="outline"
-          size="lg"
-          className="flex-1 h-12"
+          className="flex-1 h-12 border border-[#0f172a]/20 hover:bg-[#0f172a]/5 dark:border-white/20 dark:hover:bg-white/5"
         >
-          <Save className="mr-2 h-5 w-5" />
+          <Save className="mr-2 h-4 w-4" />
           Save
         </Button>
       </div>

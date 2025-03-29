@@ -1,4 +1,3 @@
-
 import { secureStorageService } from './secureStorageService';
 import { Filesystem } from '@capacitor/filesystem';
 
@@ -97,8 +96,7 @@ export const apiService = {
         path: filePath
       });
       
-      // Convert base64 to Blob
-      // Make sure we're working with a string before using atob
+      // Convert base64 to Blob - ensure data is a string before using atob
       if (typeof fileContent.data !== 'string') {
         throw new Error('File content is not a valid base64 string');
       }

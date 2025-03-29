@@ -42,18 +42,24 @@ const Index = () => {
 
   const processAudioFile = async (filePath: string) => {
     // Check if API key exists first
-    const apiKey = await secureStorageService.getApiKey();
-    if (!apiKey) {
-      toast({
-        title: "API Key Required",
-        description: "Please add your OpenAI API key to use this feature",
-        variant: "destructive",
-      });
-      setApiKeyDialogOpen(true);
-      return;
-    }
-
     try {
+      const apiKey = await secureStorageService.getApiKey();
+      if (!apiKey) {
+        toast({
+          title: "API Key Required",
+          description: "Please add your OpenAI API key to use this feature",
+          variant: "destructive",
+        });
+        setApiKeyDialogOpen(true);
+        return;
+      }
+
+      // Skip if filePath is empty (file selection was canceled)
+      if (!filePath) {
+        console.log("No file path provided, operation was likely canceled by user");
+        return;
+      }
+
       setIsLoading(true);
       setProgress(10);
       setStatus(`Processing file...`);
@@ -117,14 +123,14 @@ const Index = () => {
   };
 
   return (
-    <div className="container mx-auto p-4 max-w-3xl">
+    <div className="container mx-auto px-4 py-4 max-w-3xl">
       <Header />
       
-      <Card className="mb-6 overflow-hidden border-0 shadow-lg">
-        <CardHeader className="bg-primary/5 px-6 py-4">
-          <CardTitle>Audio Input</CardTitle>
+      <Card className="mb-5 overflow-hidden border-0 shadow-lg">
+        <CardHeader className="bg-primary/5 px-5 py-3">
+          <CardTitle className="text-lg font-semibold">Audio Input</CardTitle>
         </CardHeader>
-        <CardContent className="p-6">
+        <CardContent className="p-5">
           <AudioInput 
             onFileSelected={processAudioFile}
             isLoading={isLoading}
@@ -139,11 +145,11 @@ const Index = () => {
         onStatusChange={setIsLiveActive} 
       />
       
-      <Card className="mb-6 overflow-hidden border-0 shadow-lg">
-        <CardHeader className="bg-primary/5 px-6 py-4 flex flex-row items-center justify-between">
-          <CardTitle>Transcription</CardTitle>
+      <Card className="mb-5 overflow-hidden border-0 shadow-lg">
+        <CardHeader className="bg-primary/5 px-5 py-3 flex flex-row items-center justify-between">
+          <CardTitle className="text-lg font-semibold">Transcription</CardTitle>
         </CardHeader>
-        <CardContent className="p-6">
+        <CardContent className="p-5">
           <TranscriptionOutput 
             transcription={transcription}
             detectedLanguage={detectedLanguage}
@@ -152,11 +158,11 @@ const Index = () => {
         </CardContent>
       </Card>
 
-      <Card className="mb-6 overflow-hidden border-0 shadow-lg">
-        <CardHeader className="bg-primary/5 px-6 py-4">
-          <CardTitle>Translation</CardTitle>
+      <Card className="mb-5 overflow-hidden border-0 shadow-lg">
+        <CardHeader className="bg-primary/5 px-5 py-3">
+          <CardTitle className="text-lg font-semibold">Translation</CardTitle>
         </CardHeader>
-        <CardContent className="p-6">
+        <CardContent className="p-5">
           <Translation 
             transcription={transcription}
             isLoading={isLoading}

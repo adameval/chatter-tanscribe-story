@@ -6,11 +6,20 @@ const config: CapacitorConfig = {
   appName: 'AI Transcriber',
   webDir: 'dist',
   server: {
-    androidScheme: 'https'
+    androidScheme: 'https',
+    // For development only - remove for production build
+    url: 'https://26e7487129b644dd9d557c3242e66523.lovableproject.com?forceHideBadge=true',
+    cleartext: true
   },
   plugins: {
     CapacitorHttp: {
       enabled: true
+    },
+    SplashScreen: {
+      launchAutoHide: false,
+      backgroundColor: "#FFFFFF",
+      androidSplashResourceName: "splash",
+      androidScaleType: "CENTER_CROP"
     }
   },
   android: {

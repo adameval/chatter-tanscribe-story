@@ -20,9 +20,17 @@ export const audioProcessingService = {
         throw new Error('Invalid file path: Path is empty or undefined');
       }
       
-      // Extract the file name from the path
-      const filePathParts = filePath.split('/');
-      const fileName = filePathParts[filePathParts.length - 1];
+      // Extract the file name from the path - handle different path formats
+      let fileName = '';
+      if (filePath.includes('/')) {
+        const filePathParts = filePath.split('/');
+        fileName = filePathParts[filePathParts.length - 1];
+      } else if (filePath.includes('\\')) {
+        const filePathParts = filePath.split('\\');
+        fileName = filePathParts[filePathParts.length - 1];
+      } else {
+        fileName = filePath; // If no separators, use the whole path as filename
+      }
       
       if (!fileName) {
         throw new Error('Invalid file path structure: Could not extract filename');
