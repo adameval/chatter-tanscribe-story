@@ -98,6 +98,11 @@ export const apiService = {
       });
       
       // Convert base64 to Blob
+      // Make sure we're working with a string before using atob
+      if (typeof fileContent.data !== 'string') {
+        throw new Error('File content is not a valid base64 string');
+      }
+      
       const byteCharacters = atob(fileContent.data);
       const byteArrays = [];
       for (let offset = 0; offset < byteCharacters.length; offset += 1024) {
