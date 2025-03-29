@@ -1,5 +1,6 @@
 
 import { secureStorageService } from './secureStorageService';
+import { Filesystem } from '@capacitor/filesystem';
 
 const OPENAI_API_URL = 'https://api.openai.com/v1';
 
@@ -84,6 +85,43 @@ export const apiService = {
     
     const result = await response.json();
     return result.text;
+  },
+  
+  /**
+   * Transcribe audio from a file path
+   */
+  async transcribeFile(filePath: string, language?: string): Promise<string> {
+    try {
+      // Read the file
+      const fileContent = await Filesystem.readFile({
+        path: filePath
+      });
+      
+      // Convert base64 to Blob
+      const byteCharacters = atob(fileContent.data);
+      const byteArrays = [];
+      for (let offset = 0; offset < byteCharacters.length; offset += 1024) {
+        const slice = byteCharacters.slice(offset, offset + 1024);
+        const byteNumbers = new Array(slice.length);
+        for (let i = 0; i < slice.length; i++) {
+          byteNumbers[i] = slice.charCodeAt(i);
+        }
+        const byteArray = new Uint8Array(byteNumbers);
+        byteArrays.push(byteArray);
+      }
+      
+      const blob = new Blob(byteArrays, { type: 'audio/mp3' });
+      const file = new File([blob], 'audio.mp3', { type: 'audio/mp3' });
+      
+      // Transcribe the file
+      return await this.transcribeAudio({
+        file,
+        language
+      });
+    } catch (error) {
+      console.error('Error transcribing file:', error);
+      throw new Error(`Failed to transcribe file: ${error}`);
+    }
   },
   
   /**
@@ -174,5 +212,63 @@ ${options.text}
     
     const result = await response.json();
     return result.choices[0].message.content;
+  },
+  
+  /**
+   * Perform live transcription and translation between Russian and Spanish
+   */
+  async liveTranscribe(audioBlob: Blob): Promise<{
+    originalText: string;
+    translatedText: string;
+    detectedLanguage: 'russian' | 'spanish';
+  }> {
+    try {
+      // 1. Transcribe the audio
+      const transcription = await this.transcribeAudio({
+        file: audioBlob
+      });
+      
+      // 2. Determine language
+      const detectedLanguage = this.detectLanguage(transcription);
+      
+      // 3. Translate to the other language
+      const targetLanguage = detectedLanguage === 'russian' ? 'spanish' : 'russian';
+      const translation = await this.translateText({
+        text: transcription,
+        targetLanguage
+      });
+      
+      return {
+        originalText: transcription,
+        translatedText: translation,
+        detectedLanguage
+      };
+    } catch (error) {
+      console.error('Error in live transcription:', error);
+      throw new Error(`Live transcription failed: ${error}`);
+    }
+  },
+  
+  /**
+   * Simple language detection (simplified for demo)
+   */
+  detectLanguage(text: string): 'russian' | 'spanish' {
+    // A very simplistic language detection approach
+    // In a real app, we'd use a proper language detection library
+    
+    // Cyrillic characters are used in Russian
+    const cyrillicPattern = /[\u0400-\u04FF]/;
+    if (cyrillicPattern.test(text)) {
+      return 'russian';
+    }
+    
+    // Spanish characters and patterns
+    const spanishPattern = /[áéíóúüñ¿¡]/i;
+    if (spanishPattern.test(text)) {
+      return 'spanish';
+    }
+    
+    // Default to Spanish if we can't determine
+    return 'spanish';
   }
 };
