@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -9,7 +8,6 @@ import { Progress } from "@/components/ui/progress";
 import { Mic, Save, Folder, Link as LinkIcon, Play, StopCircle, FileText } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
-// Import the FileSystem and Media capacitor plugins
 import { FilePicker } from "@capawesome/capacitor-file-picker";
 import { Directory, Filesystem } from "@capacitor/filesystem";
 import { audioProcessingService } from "@/services/audioProcessingService";
@@ -28,7 +26,6 @@ const Index = () => {
   const [mediaURL, setMediaURL] = useState("");
   const [isRecording, setIsRecording] = useState(false);
 
-  // Check for API key on first load
   useState(() => {
     // TODO: Check for stored API key in secure storage
     // If not found, prompt user to enter it
@@ -42,7 +39,6 @@ const Index = () => {
 
       const result = await FilePicker.pickFiles({
         types: ["audio/mpeg", "audio/wav", "video/mp4", "audio/x-m4a"],
-        multiple: false,
       });
 
       if (result.files.length > 0) {
@@ -121,7 +117,6 @@ const Index = () => {
   };
 
   const toggleRecording = async () => {
-    // TODO: Implement recording functionality
     setIsRecording(!isRecording);
     toast({
       title: isRecording ? "Recording stopped" : "Recording started",
@@ -234,7 +229,6 @@ const Index = () => {
     <div className="container mx-auto p-4 max-w-3xl">
       <h1 className="text-3xl font-bold mb-6 text-center">AI Transcriber & Translator</h1>
       
-      {/* Audio Input Section */}
       <Card className="mb-6">
         <CardHeader>
           <CardTitle>Audio Input</CardTitle>
@@ -295,7 +289,6 @@ const Index = () => {
         </CardContent>
       </Card>
 
-      {/* Transcription Output */}
       <Card className="mb-6">
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle>Transcription</CardTitle>
@@ -334,7 +327,6 @@ const Index = () => {
         </CardContent>
       </Card>
 
-      {/* Translation Section */}
       <Card>
         <CardHeader>
           <CardTitle>Translation</CardTitle>
