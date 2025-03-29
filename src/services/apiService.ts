@@ -134,7 +134,7 @@ export const apiService = {
       method: 'POST',
       headers,
       body: JSON.stringify({
-        model: options.model || 'gpt-4-turbo',
+        model: options.model || 'gpt-4o-mini',
         messages: [
           {
             role: 'system',
@@ -193,7 +193,7 @@ ${options.text}
       method: 'POST',
       headers,
       body: JSON.stringify({
-        model: options.model || 'gpt-4-turbo',
+        model: options.model || 'gpt-4o-mini',
         messages: [
           {
             role: 'user',

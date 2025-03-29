@@ -1,5 +1,4 @@
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -24,6 +23,19 @@ export function ApiKeyDialog({ open, onOpenChange, onApiKeySaved }: ApiKeyDialog
   const [apiKey, setApiKey] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+
+  useEffect(() => {
+    const checkApiKey = async () => {
+      const storedKey = await secureStorageService.getApiKey();
+      
+      if (!open && !storedKey) {
+        console.log('Preventing dialog closure - no API key available');
+        onOpenChange(true);
+      }
+    };
+    
+    checkApiKey();
+  }, [open, onOpenChange]);
 
   const handleSave = async () => {
     if (!apiKey.trim()) {
@@ -56,8 +68,27 @@ export function ApiKeyDialog({ open, onOpenChange, onApiKeySaved }: ApiKeyDialog
     }
   };
 
+  const handleOpenChange = (newOpenState: boolean) => {
+    if (!newOpenState) {
+      secureStorageService.getApiKey().then(key => {
+        if (key) {
+          onOpenChange(false);
+        } else {
+          toast({
+            title: "Required",
+            description: "An OpenAI API key is required to use this app",
+            variant: "destructive",
+          });
+          onOpenChange(true);
+        }
+      });
+    } else {
+      onOpenChange(true);
+    }
+  };
+
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle>OpenAI API Key</DialogTitle>
@@ -66,7 +97,7 @@ export function ApiKeyDialog({ open, onOpenChange, onApiKeySaved }: ApiKeyDialog
           </DialogDescription>
         </DialogHeader>
         <div className="flex flex-col gap-4 py-4">
-          <Label htmlFor="apiKey" className="text-right">
+          <Label htmlFor="apiKey">
             API Key
           </Label>
           <Input
@@ -75,16 +106,31 @@ export function ApiKeyDialog({ open, onOpenChange, onApiKeySaved }: ApiKeyDialog
             value={apiKey}
             onChange={(e) => setApiKey(e.target.value)}
             placeholder="sk-..."
+            className="h-12"
           />
           <p className="text-xs text-muted-foreground">
             Your API key is stored securely on your device and is never sent to any server other than OpenAI's API.
+            <br />
+            <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener noreferrer" className="text-primary underline">
+              Get an API key from OpenAI
+            </a>
           </p>
         </div>
         <DialogFooter className="sm:justify-between">
-          <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isLoading}>
+          <Button 
+            variant="outline" 
+            onClick={() => handleOpenChange(false)} 
+            disabled={isLoading}
+            className="h-12"
+          >
             Cancel
           </Button>
-          <Button type="button" onClick={handleSave} disabled={isLoading || !apiKey.trim()}>
+          <Button 
+            type="button" 
+            onClick={handleSave} 
+            disabled={isLoading || !apiKey.trim()}
+            className="h-12 px-6"
+          >
             {isLoading ? "Saving..." : "Save"}
           </Button>
         </DialogFooter>

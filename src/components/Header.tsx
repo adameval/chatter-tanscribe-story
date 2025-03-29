@@ -1,33 +1,61 @@
 
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { Settings, Moon, Sun } from "lucide-react";
+import { Settings, Moon, Sun, LaptopIcon } from "lucide-react";
 import { useTheme } from "@/contexts/ThemeContext";
+import { 
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 export function Header() {
   const { theme, setTheme } = useTheme();
   
-  const toggleTheme = () => {
-    setTheme(theme === 'dark' ? 'light' : 'dark');
-  };
-  
   return (
-    <header className="flex justify-between items-center mb-6">
-      <h1 className="text-3xl font-bold">AI Transcriber</h1>
-      <div className="flex gap-2">
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={toggleTheme}
-          title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
-        >
-          {theme === 'dark' ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
-        </Button>
+    <header className="flex justify-between items-center mb-6 py-4">
+      <h1 className="text-3xl font-semibold tracking-tight">AI Transcriber</h1>
+      <div className="flex gap-3">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-10 w-10 rounded-full"
+              title="Theme settings"
+            >
+              {theme === 'dark' ? (
+                <Moon className="h-5 w-5" />
+              ) : theme === 'system' ? (
+                <LaptopIcon className="h-5 w-5" />
+              ) : (
+                <Sun className="h-5 w-5" />
+              )}
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuItem onClick={() => setTheme('light')}>
+              <Sun className="mr-2 h-4 w-4" />
+              <span>Light</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setTheme('dark')}>
+              <Moon className="mr-2 h-4 w-4" />
+              <span>Dark</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setTheme('system')}>
+              <LaptopIcon className="mr-2 h-4 w-4" />
+              <span>System</span>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+        
         <Button
           variant="ghost"
           size="icon"
           asChild
           title="Settings"
+          className="h-10 w-10 rounded-full"
         >
           <Link to="/settings">
             <Settings className="h-5 w-5" />

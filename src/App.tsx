@@ -17,27 +17,36 @@ const queryClient = new QueryClient();
 
 const App = () => {
   const [apiKeyDialogOpen, setApiKeyDialogOpen] = useState(false);
+  const [isInitialized, setIsInitialized] = useState(false);
   
   // Initialize Capacitor plugins
   useEffect(() => {
     // Ensure directories exist for file operations
     const initializeApp = async () => {
       try {
-        await Filesystem.mkdir({
-          path: 'transcriber',
-          directory: Directory.Cache,
-          recursive: true
-        });
+        // Create directory only if it doesn't exist
+        try {
+          await Filesystem.mkdir({
+            path: 'transcriber',
+            directory: Directory.Cache,
+            recursive: true
+          });
+        } catch (error) {
+          console.log('Directory may already exist, continuing:', error);
+        }
         
         // Check if API key exists, if not open the dialog
         const apiKey = await secureStorageService.getApiKey();
         if (!apiKey) {
+          console.log('No API key found, opening dialog');
           setApiKeyDialogOpen(true);
         }
         
         console.log('App initialized successfully');
       } catch (error) {
         console.error('Error initializing app:', error);
+      } finally {
+        setIsInitialized(true);
       }
     };
 
@@ -59,7 +68,6 @@ const App = () => {
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/settings" element={<Settings />} />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>

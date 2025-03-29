@@ -15,31 +15,60 @@ export const audioProcessingService = {
    */
   async convertMediaFile(filePath: string): Promise<string> {
     try {
-      // Extract the file name and create a new name for the converted file
-      const fileName = filePath.split('/').pop();
-      if (!fileName) {
-        throw new Error('Invalid file path');
+      // Check if filePath is valid
+      if (!filePath) {
+        throw new Error('Invalid file path: Path is empty or undefined');
       }
       
-      const outputFileName = `converted-${fileName.split('.')[0]}.mp3`;
+      // Extract the file name from the path
+      const filePathParts = filePath.split('/');
+      const fileName = filePathParts[filePathParts.length - 1];
+      
+      if (!fileName) {
+        throw new Error('Invalid file path structure: Could not extract filename');
+      }
+      
+      // Create a new name for the converted file
+      const fileNameParts = fileName.split('.');
+      const extension = fileNameParts.length > 1 ? fileNameParts.pop() : 'mp3';
+      const baseName = fileNameParts.join('.');
+      const outputFileName = `converted-${baseName}.mp3`;
       const outputPath = `transcriber/${outputFileName}`;
       
       console.log(`Converting ${fileName} to ${outputFileName}`);
       
-      // This is a placeholder. In a real app, we would use FFmpeg or another audio converter
-      // For now, we'll just copy the file to simulate conversion
-      const fileInfo = await Filesystem.stat({
-        path: filePath
-      });
+      try {
+        // Check if the source file exists and is accessible
+        await Filesystem.stat({
+          path: filePath
+        });
+      } catch (error) {
+        console.error('Error accessing source file:', error);
+        throw new Error(`Source file not accessible: ${error}`);
+      }
       
-      // If the file is accessible, copy it to our app's directory
+      // Ensure the transcriber directory exists
+      try {
+        await Filesystem.mkdir({
+          path: 'transcriber',
+          directory: Directory.Cache,
+          recursive: true
+        });
+      } catch (error) {
+        // Directory might already exist, that's fine
+        console.log('Directory might already exist:', error);
+      }
+      
+      // Copy the file to our app's directory
       await Filesystem.copy({
         from: filePath,
         to: outputPath,
         directory: Directory.Cache
       });
       
-      return `${Directory.Cache}/${outputPath}`;
+      const fullOutputPath = `${Directory.Cache}/transcriber/${outputFileName}`;
+      console.log('Converted file path:', fullOutputPath);
+      return fullOutputPath;
     } catch (error) {
       console.error('Error converting media file:', error);
       throw new Error(`Failed to convert media file: ${error}`);
@@ -55,6 +84,10 @@ export const audioProcessingService = {
    */
   async chunkMediaFile(filePath: string, maxChunkSizeBytes: number = 24 * 1024 * 1024): Promise<string[]> {
     try {
+      if (!filePath) {
+        throw new Error('Invalid file path: Path is empty or undefined');
+      }
+      
       // Get file info to check if chunking is needed
       const fileInfo = await Filesystem.stat({
         path: filePath
@@ -65,14 +98,22 @@ export const audioProcessingService = {
         return [filePath];
       }
 
-      // Placeholder for actual chunking implementation
+      // Prepare for chunking
       const outputPaths = [];
-      const baseName = filePath.split('/').pop()?.split('.')[0] || 'chunk';
+      
+      // Extract base name for chunking
+      const filePathParts = filePath.split('/');
+      const fileName = filePathParts[filePathParts.length - 1];
+      const fileNameParts = fileName.split('.');
+      const baseName = fileNameParts.length > 1 ? fileNameParts.slice(0, -1).join('.') : fileName;
       
       // In a real implementation, this would use FFmpeg or another tool to split the audio
       // For now, we'll simulate chunking by copying the file
-      for (let i = 0; i < Math.ceil(fileInfo.size / maxChunkSizeBytes); i++) {
-        const chunkPath = `transcriber/chunk-${baseName}-${i}.mp3`;
+      const chunkCount = Math.ceil(fileInfo.size / maxChunkSizeBytes);
+      
+      for (let i = 0; i < chunkCount; i++) {
+        const chunkFileName = `chunk-${baseName}-${i}.mp3`;
+        const chunkPath = `transcriber/${chunkFileName}`;
         
         await Filesystem.copy({
           from: filePath,
@@ -80,7 +121,7 @@ export const audioProcessingService = {
           directory: Directory.Cache
         });
         
-        outputPaths.push(`${Directory.Cache}/${chunkPath}`);
+        outputPaths.push(`${Directory.Cache}/transcriber/${chunkFileName}`);
       }
 
       return outputPaths;
@@ -95,7 +136,7 @@ export const audioProcessingService = {
    * Note: This is a placeholder. In a real implementation, this would use
    * a local diarization library integrated with the app.
    * 
-   * @param filePath Path to the audio file
+   * @param transcription Transcribed text to add speaker labels to
    * @returns Diarized text with speaker labels
    */
   async performDiarization(transcription: string): Promise<string> {

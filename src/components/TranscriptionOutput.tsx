@@ -6,6 +6,7 @@ import { useState } from "react";
 import { SummaryDialog } from "./SummaryDialog";
 import { apiService } from "@/services/apiService";
 import { useToast } from "@/hooks/use-toast";
+import { Badge } from "@/components/ui/badge";
 
 interface TranscriptionOutputProps {
   transcription: string;
@@ -88,35 +89,39 @@ export function TranscriptionOutput({ transcription, detectedLanguage, isLoading
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between mb-2">
-        <div className="text-sm text-muted-foreground">
-          Detected Language: {detectedLanguage}
-        </div>
+        {detectedLanguage !== "-" && (
+          <Badge variant="outline" className="text-xs">
+            {detectedLanguage}
+          </Badge>
+        )}
       </div>
       
       <Textarea 
         value={transcription} 
         readOnly 
-        className="min-h-[200px] font-mono"
+        className="min-h-[200px] font-mono focus:ring-2 focus:ring-primary/20"
         placeholder="Transcription will appear here..."
       />
       
-      <div className="flex gap-2">
+      <div className="flex flex-col sm:flex-row gap-3">
         <Button
           onClick={handleSummarize}
           disabled={isLoading || !transcription || isSummarizing}
           variant="outline"
-          className="flex-1"
+          size="lg"
+          className="flex-1 h-12"
         >
-          <FileText className="mr-2 h-4 w-4" />
+          <FileText className="mr-2 h-5 w-5" />
           {isSummarizing ? "Summarizing..." : "Summarize"}
         </Button>
         <Button
           onClick={handleSaveTranscription}
           disabled={isLoading || !transcription}
           variant="outline"
-          className="flex-1"
+          size="lg"
+          className="flex-1 h-12"
         >
-          <Save className="mr-2 h-4 w-4" />
+          <Save className="mr-2 h-5 w-5" />
           Save
         </Button>
       </div>

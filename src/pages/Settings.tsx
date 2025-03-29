@@ -1,9 +1,9 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Eye, EyeOff, ArrowLeft, Moon, Sun, Computer } from "lucide-react";
+import { Eye, EyeOff, ArrowLeft, Moon, Sun, LaptopIcon } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { secureStorageService } from "@/services/secureStorageService";
 import { Link, useNavigate } from "react-router-dom";
@@ -18,7 +18,7 @@ const Settings = () => {
   const [maskedApiKey, setMaskedApiKey] = useState("");
   const [showApiKey, setShowApiKey] = useState(false);
   
-  useState(() => {
+  useEffect(() => {
     const loadApiKey = async () => {
       try {
         const key = await secureStorageService.getApiKey();
@@ -33,7 +33,7 @@ const Settings = () => {
     };
     
     loadApiKey();
-  });
+  }, []);
   
   const handleUpdateApiKey = async () => {
     if (!apiKey.trim()) {
@@ -92,65 +92,65 @@ const Settings = () => {
 
   return (
     <div className="container mx-auto p-4 max-w-3xl">
-      <header className="flex items-center mb-6">
+      <header className="flex items-center mb-6 py-4">
         <Button 
           variant="outline" 
           size="icon" 
           onClick={() => navigate(-1)}
-          className="mr-4"
+          className="mr-4 h-10 w-10 rounded-full"
         >
-          <ArrowLeft className="h-4 w-4" />
+          <ArrowLeft className="h-5 w-5" />
         </Button>
-        <h1 className="text-2xl font-bold">Settings</h1>
+        <h1 className="text-2xl font-semibold tracking-tight">Settings</h1>
       </header>
       
-      <Card className="mb-6">
-        <CardHeader>
+      <Card className="mb-6 overflow-hidden border-0 shadow-lg">
+        <CardHeader className="bg-primary/5 px-6 py-4">
           <CardTitle>Theme</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-6">
           <div className="flex gap-4">
             <Button
               variant={theme === 'light' ? "default" : "outline"}
               onClick={() => setTheme("light")}
-              className="flex-1"
+              className="flex-1 h-12"
             >
-              <Sun className="mr-2 h-4 w-4" />
+              <Sun className="mr-2 h-5 w-5" />
               Light
             </Button>
             <Button
               variant={theme === 'dark' ? "default" : "outline"}
               onClick={() => setTheme("dark")}
-              className="flex-1"
+              className="flex-1 h-12"
             >
-              <Moon className="mr-2 h-4 w-4" />
+              <Moon className="mr-2 h-5 w-5" />
               Dark
             </Button>
             <Button
               variant={theme === 'system' ? "default" : "outline"}
               onClick={() => setTheme("system")}
-              className="flex-1"
+              className="flex-1 h-12"
             >
-              <Computer className="mr-2 h-4 w-4" />
+              <LaptopIcon className="mr-2 h-5 w-5" />
               System
             </Button>
           </div>
         </CardContent>
       </Card>
       
-      <Card className="mb-6">
-        <CardHeader>
+      <Card className="mb-6 overflow-hidden border-0 shadow-lg">
+        <CardHeader className="bg-primary/5 px-6 py-4">
           <CardTitle>OpenAI API Key</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="p-6 space-y-4">
           {maskedApiKey && (
-            <div className="flex items-center gap-2">
-              <div className="text-sm font-medium">Current API Key: {showApiKey ? maskedApiKey : "••••••••••••••••"}</div>
+            <div className="flex items-center gap-2 bg-muted/20 p-3 rounded-md">
+              <div className="text-sm font-medium flex-1">Current API Key: {showApiKey ? maskedApiKey : "••••••••••••••••"}</div>
               <Button 
                 variant="ghost" 
                 size="icon" 
                 onClick={() => setShowApiKey(!showApiKey)}
-                className="h-8 w-8"
+                className="h-9 w-9 rounded-full"
               >
                 {showApiKey ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
               </Button>
@@ -163,11 +163,12 @@ const Settings = () => {
               value={apiKey}
               onChange={(e) => setApiKey(e.target.value)}
               type="password"
-              className="flex-1"
+              className="flex-1 h-12"
             />
             <Button 
               onClick={handleUpdateApiKey} 
               disabled={isLoading || !apiKey.trim()}
+              className="h-12 px-6"
             >
               Update Key
             </Button>
@@ -178,7 +179,7 @@ const Settings = () => {
               variant="destructive" 
               onClick={handleRemoveApiKey} 
               disabled={isLoading}
-              className="w-full"
+              className="w-full h-12"
             >
               Remove API Key
             </Button>
@@ -186,15 +187,19 @@ const Settings = () => {
           
           <p className="text-xs text-muted-foreground mt-2">
             Your API key is stored securely on your device and is never sent to any server other than OpenAI's API.
+            <br />
+            <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener noreferrer" className="text-primary underline">
+              Get an API key from OpenAI
+            </a>
           </p>
         </CardContent>
       </Card>
       
-      <Card>
-        <CardHeader>
+      <Card className="overflow-hidden border-0 shadow-lg">
+        <CardHeader className="bg-primary/5 px-6 py-4">
           <CardTitle>About</CardTitle>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-6">
           <div className="space-y-4 text-center">
             <h2 className="text-xl font-bold">AI Transcriber</h2>
             <p>

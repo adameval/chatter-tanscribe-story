@@ -24,11 +24,13 @@ export function AudioInput({ onFileSelected, isLoading, progress, status }: Audi
     try {
       const result = await FilePicker.pickFiles({
         types: ["audio/mpeg", "audio/wav", "video/mp4", "audio/x-m4a"],
+        // Remove the unsupported 'multiple' property
       });
 
       if (result.files.length > 0) {
         const file = result.files[0];
-        onFileSelected(file.path);
+        console.log("Selected file:", file);
+        onFileSelected(file.path || '');
       }
     } catch (error) {
       console.error("Error selecting file:", error);
@@ -80,12 +82,13 @@ export function AudioInput({ onFileSelected, isLoading, progress, status }: Audi
 
   return (
     <div className="space-y-4">
-      <div className="flex gap-4">
+      <div className="flex flex-col sm:flex-row gap-4">
         <Button 
           onClick={handleFileSelect} 
           disabled={isLoading || isRecording}
-          className="flex-1"
+          className="h-12 px-6 flex-1"
           size="lg"
+          variant="default"
         >
           <Folder className="mr-2 h-5 w-5" />
           Select File
@@ -94,7 +97,7 @@ export function AudioInput({ onFileSelected, isLoading, progress, status }: Audi
           onClick={toggleRecording} 
           disabled={isLoading}
           variant={isRecording ? "destructive" : "default"}
-          className="flex-1"
+          className="h-12 px-6 flex-1"
           size="lg"
         >
           {isRecording ? (
@@ -117,11 +120,13 @@ export function AudioInput({ onFileSelected, isLoading, progress, status }: Audi
           value={mediaURL}
           onChange={(e) => setMediaURL(e.target.value)}
           disabled={isLoading || isRecording}
-          className="flex-1"
+          className="flex-1 h-12"
         />
         <Button 
           onClick={handleURLSubmit} 
           disabled={isLoading || isRecording || !mediaURL}
+          className="h-12 px-6"
+          size="lg"
         >
           <LinkIcon className="mr-2 h-4 w-4" />
           Load URL

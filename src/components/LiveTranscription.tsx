@@ -2,7 +2,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Mic, StopCircle } from "lucide-react";
+import { Mic, StopCircle, Save } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { apiService } from "@/services/apiService";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -161,41 +161,40 @@ export function LiveTranscription({ isActive, onStatusChange }: LiveTranscriptio
   };
   
   return (
-    <Card className="mb-6">
-      <CardContent className="p-4 space-y-4">
-        <div className="flex justify-between items-center">
-          <Button
-            onClick={() => onStatusChange(!isActive)}
-            variant={isActive ? "destructive" : "default"}
-            className={`w-full ${isActive ? "animate-pulse" : ""}`}
-          >
-            {isActive ? (
-              <>
-                <StopCircle className="mr-2 h-4 w-4" />
-                Stop Live Transcription (RU/ES)
-              </>
-            ) : (
-              <>
-                <Mic className="mr-2 h-4 w-4" />
-                Start Live Transcription (RU/ES)
-              </>
-            )}
-          </Button>
-        </div>
+    <Card className="mb-6 overflow-hidden border-0 shadow-lg">
+      <CardContent className="p-4 sm:p-6 space-y-4">
+        <Button
+          onClick={() => onStatusChange(!isActive)}
+          variant={isActive ? "destructive" : "default"}
+          className={`w-full h-12 ${isActive ? "animate-pulse" : ""}`}
+          size="lg"
+        >
+          {isActive ? (
+            <>
+              <StopCircle className="mr-2 h-5 w-5" />
+              Stop Live Transcription (RU/ES)
+            </>
+          ) : (
+            <>
+              <Mic className="mr-2 h-5 w-5" />
+              Start Live Transcription (RU/ES)
+            </>
+          )}
+        </Button>
         
         {entries.length > 0 && (
           <>
-            <ScrollArea className="h-[300px] border rounded-md p-4 bg-muted/20" ref={scrollAreaRef}>
+            <ScrollArea className="h-[300px] border rounded-md bg-muted/10 p-3" ref={scrollAreaRef}>
               {entries.map((entry, index) => (
                 <div key={index} className="mb-4 last:mb-0">
                   <div className="text-xs text-muted-foreground mb-1">
                     {entry.timestamp.toLocaleTimeString()}
                   </div>
-                  <div className="p-2 rounded-md bg-primary/10 mb-1">
+                  <div className="p-3 rounded-md bg-primary/5 mb-1">
                     <strong>{entry.originalLanguage === 'russian' ? 'Russian:' : 'Spanish:'}</strong>
                     <p>{entry.originalText}</p>
                   </div>
-                  <div className="p-2 rounded-md bg-secondary/10">
+                  <div className="p-3 rounded-md bg-secondary/20">
                     <strong>{entry.originalLanguage === 'russian' ? 'Spanish:' : 'Russian:'}</strong>
                     <p>{entry.translatedText}</p>
                   </div>
@@ -206,15 +205,17 @@ export function LiveTranscription({ isActive, onStatusChange }: LiveTranscriptio
             <Button
               onClick={handleSaveTranscript}
               variant="outline"
-              className="w-full"
+              className="w-full h-12"
+              size="lg"
             >
+              <Save className="mr-2 h-5 w-5" />
               Save Live Transcript
             </Button>
           </>
         )}
         
         {isActive && entries.length === 0 && (
-          <div className="text-center p-4 text-muted-foreground">
+          <div className="text-center p-6 text-muted-foreground">
             Listening for Russian and Spanish speech...
           </div>
         )}

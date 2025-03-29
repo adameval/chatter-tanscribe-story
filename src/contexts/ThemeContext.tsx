@@ -1,5 +1,6 @@
 
 import React, { createContext, useContext, useEffect, useState } from 'react';
+import { Preferences } from '@capacitor/preferences';
 
 type ThemeType = 'light' | 'dark' | 'system';
 
@@ -20,44 +21,60 @@ export const useTheme = () => {
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [theme, setTheme] = useState<ThemeType>('system');
+  const [isLoaded, setIsLoaded] = useState(false);
 
+  // Load theme preference
   useEffect(() => {
-    // Load saved theme preference from storage
     const loadTheme = async () => {
       try {
-        const { Preferences } = await import('@capacitor/preferences');
         const { value } = await Preferences.get({ key: 'theme' });
         if (value) {
           setTheme(value as ThemeType);
         }
       } catch (error) {
         console.error('Failed to load theme preference:', error);
+      } finally {
+        setIsLoaded(true);
       }
     };
     
     loadTheme();
   }, []);
 
+  // Apply and save theme
   useEffect(() => {
-    // Save theme preference
+    if (!isLoaded) return; // Don't save until initial load is complete
+    
     const saveTheme = async () => {
       try {
-        const { Preferences } = await import('@capacitor/preferences');
         await Preferences.set({ key: 'theme', value: theme });
       } catch (error) {
         console.error('Failed to save theme preference:', error);
       }
     };
 
-    if (theme !== 'system') {
-      saveTheme();
-    }
+    saveTheme();
     
     // Apply theme to document
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
     const isDark = theme === 'dark' || (theme === 'system' && prefersDark);
     
     document.documentElement.classList.toggle('dark', isDark);
+  }, [theme, isLoaded]);
+
+  // Listen for system theme changes when in 'system' mode
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    
+    const handleChange = () => {
+      if (theme === 'system') {
+        document.documentElement.classList.toggle('dark', mediaQuery.matches);
+      }
+    };
+    
+    mediaQuery.addEventListener('change', handleChange);
+    
+    return () => mediaQuery.removeEventListener('change', handleChange);
   }, [theme]);
 
   return (
